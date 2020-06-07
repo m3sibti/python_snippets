@@ -1,0 +1,108 @@
+import tensorflow as tf
+import os
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+import numpy as np
+from tensorflow.keras.preprocessing import image as kimage
+
+
+class ImageUtils:
+
+  # Prepare image from a desktop
+  def prepare_img(self, x):
+    x_img = kimage.load_img(x)
+    x_img = kimage.img_to_array(x_img)
+    # normalize it
+    x_img = x_img / 255.
+    return x_img
+
+  # resize the image with aspect ratio
+  def resizeKeepingTheAspectRatio(self, img, new_size):
+    resized_img = tf.image.resize(img[np.newaxis, ...], new_size, preserve_aspect_ratio=True)
+    resized_img = np.squeeze(resized_img)
+    return resized_img
+    
+  # show two images together
+  def show_coupled_images(self, img_list, img_names_list=None):
+    plt.figure(figsize=(5, 5))
+    for i in range(2):
+      plt.subplot(1, 2, i+1)
+      plt.xticks([])
+      plt.yticks([])
+      plt.grid(False)
+      plt.title(str(img_list[i].shape))
+      plt.imshow(img_list[i])
+      if img_names_list != None:
+        plt.xlabel(img_names_list[i])
+  
+  # show single image 
+  def show_single_image(self, img):
+    plt.figure(figsize=(5, 5))
+    plt.xticks([])
+    plt.yticks([])
+    plt.grid(False)
+    plt.title(str(img.shape))
+    plt.imshow(img)
+    # plt.xtitle(img)
+
+  # show images using paths
+  def show_image_using_paths(self, x_s, target_size=None):
+    x1 , x2 = x_s
+    
+    # get names
+    x1_name = x1.split('/')[3]
+    x2_name = x2.split('/')[3]
+
+    x_ui = self.prepare_img(x1)
+    x_sl = self.prepare_img(x2)
+
+    # resize it
+    if target_size != None:
+      x_ui = self.resizeKeepingTheAspectRatio(x_ui, target_size)
+      x_sl = self.resizeKeepingTheAspectRatio(x_sl, target_size)
+
+    # plot images 
+    self.show_coupled_images([x_ui, x_sl],
+                [x1_name, x2_name])
+  
+  # show images batches w.r.t x,y
+  def show_batch_only(self, n_rows=1, n_cols=1, data_gen=None, to_show=None):
+    if to_show == 'x':
+      idx = 0
+    elif to_show == 'y':
+      idx = 1
+    
+    x = data_gen[idx]
+    
+    total_plots = n_rows*n_cols
+    plt.figure(figsize=(4,4))
+    
+    for i in range(total_plots):
+      plt.subplot(n_rows, n_cols, i+1, label='x')
+      plt.xticks([])
+      plt.yticks([])
+      plt.imshow(x[i])
+      
+  # show multiple batches together
+  def show_batch_coupled(self, n_rows=1, n_cols=2, data_gen=None):
+    x, y = data_gen
+    
+    total_plots = n_rows*n_cols
+    fig = plt.figure(figsize=(10, 8))
+    outer = gridspec.GridSpec(n_rows, n_cols, wspace=0.2, hspace=0.2)
+    
+    for i in range(total_plots):
+      inner = gridspec.GridSpecFromSubplotSpec(1, 2,
+                      subplot_spec=outer[i], wspace=0.1, hspace=0.1)
+      for j in range(2):
+        ax = plt.Subplot(fig, inner[j])
+        dataToShow = None
+        if j == 0:
+          dataToShow = x[i]
+        else:
+          dataToShow = y[i]
+        t = ax.imshow(dataToShow)
+        ax.set_xticks([])
+        ax.set_yticks([])
+        fig.add_subplot(ax)
+  
