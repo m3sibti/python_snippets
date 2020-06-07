@@ -1,0 +1,39 @@
+# Web Scrapping
+import os
+import requests
+from bs4 import BeautifulSoup
+
+# Make requests using parameters.
+https://blog.hartleybrody.com/web-scraping-cheat-sheet/
+
+# make requests
+r = requests.get(f"{web_main_link}/search?", params= dict(
+                 page=i,
+                 q=filter,
+                 tax_group=group,
+                 page_size=250,
+                 collection="CORE"))
+    
+# convert the response to html file
+soup = BeautifulSoup(r.text, "html.parser")
+search_table = soup.find("table", id = "search_table")
+useful_rows = search_table.find_all("tr")
+rowsWithoutHeader = useful_rows[1:]
+for row in rowsWithoutHeader:
+    dataItemLink = row.find("td", id='profile_summary').find('a').get('href')
+    linksToDownload.append(web_main_link + dataItemLink)
+    
+# Loop through list of items
+r = requests.get(flink)
+soup = BeautifulSoup(r.text, "html.parser")
+body_box = soup.find_all("div", "box-body")[4]
+itemToGo = body_box.find('a')
+if itemToGo != None:
+  downloadableFiles.append(itemToGo.get('href'))
+  
+
+# Download Files
+print('Downloading 10 Motif Files....')
+for ilink in tqdm(lists[:10]):
+  newFileName = ilink.split('.sites')[0].split('/')[-1]
+  urllib.request.urlretrieve(ilink, f'{dir_name}/{newFileName}.txt')
