@@ -16,6 +16,10 @@ for item in tqdm(items):
 
 # File Handling
 
+import os
+dir_name = 'data_files'
+os.makedirs(dir_name, exist_ok=True)
+
 ## writing lists to files
 with open('file.txt', 'w') as f:
     for item in items:
