@@ -1,0 +1,26 @@
+# remove list repitions
+listWithNoRepition = list(dict.fromkeys(listHavingRepitions))
+
+# list comprehension (with for and if)
+mNewList = [item.text for item in items if len(item.text) > 2]
+
+# list to string conversion
+separter = '/'
+newString = separter.join(mlist)
+
+# Loop through list (using progress bar)
+from tqdm(.notebook) import tqdm
+for item in tqdm(items):
+    print(item)
+
+
+# File Handling
+
+## writing lists to files
+with open('file.txt', 'w') as f:
+    for item in items:
+        f.write(f"{item}\n")
+        
+## reading files to list
+f = open("file.txt", 'r')
+mlist = f.read().split('\n')
