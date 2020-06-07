@@ -1,0 +1,63 @@
+# Segmentation Data Class
+class RicoDataset(keras.utils.Sequence):
+
+  def __init__(self, batch_size, img_size, i_paths, t_paths,
+               simplified_masks=True):
+    self.batch_size = batch_size
+    self.img_size = img_size
+    self.i_paths = i_paths
+    self.t_paths = t_paths
+    self.simplified_masks = simplified_masks
+
+  def __len__(self):
+    return len(self.t_paths) // self.batch_size
+
+  def prepare_img(self, x, new_size):
+    
+    # load an image
+    x_img = kimage.load_img(x, target_size=new_size)
+    x_img = kimage.img_to_array(x_img)
+    
+    # normalize it
+    x_img = x_img / 255.
+
+    # resize the image to fit a proper size keeping the aspect ratio
+    # x_img = tf.image.resize(x_img[np.newaxis, ...], new_size)#, preserve_aspect_ratio=True)
+    # x_img = np.squeeze(x_img)
+
+    return x_img
+
+  def prepare_mask(self, x):
+    # change numpy values
+    t_img = self.prepare_img(x, self.img_size)
+    n_rows = t_img.shape[0]
+    for i in range(n_rows):
+      a = t_img[i]
+      row_maxes = a.max(axis=1).reshape(-1, 1)
+      a[:] = np.where(a == row_maxes, 1, 0)
+    
+    return t_img
+
+  def __getitem__(self, idx):
+    i = idx * self.batch_size
+
+    # perform batching
+    self.batch_i_paths = self.i_paths[i: i+self.batch_size]
+    self.batch_t_paths = self.t_paths[i: i+self.batch_size]
+
+    # prepare inputs and targets
+    x = np.zeros((self.batch_size,) + self.img_size + (3,), dtype='float32')
+    y = np.zeros((self.batch_size,) + self.img_size + (3,), dtype='float32')
+
+    # fill them with real values
+    for j, (i_path, t_path) in enumerate(zip(self.batch_i_paths, self.batch_t_paths)):
+      i_img = self.prepare_img(i_path, self.img_size)
+      t_img = self.prepare_mask(t_path) if self.simplified_masks else self.prepare_img(t_path, self.img_size)
+
+      x[j] = i_img
+      y[j] = t_img
+
+    return x, y
+
+# class this
+train_gen = RicoDataset(bs, img_size, train_ui_img_path, train_semantic_img_path, simplified_masks=True)
