@@ -13,6 +13,8 @@ from tqdm(.notebook) import tqdm
 for item in tqdm(items):
     print(item)
 
+# Sort the items
+sorted(mList)
 
 # File Handling
 
