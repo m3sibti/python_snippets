@@ -1,0 +1,51 @@
+# A Custom GAN Class for Image Generation
+class GAN(keras.Model):
+  def __init__(self, disc, gen, latent_dim=5):
+    super(GAN, self).__init__()
+    self.discriminator = disc
+    self.generator = gen
+    self.latent_dim = latent_dim
+
+  def compile(self, optD, optG, loss_fn):
+    super(GAN, self).compile()
+    self.optD = optD
+    self.optG = optG
+    self.loss_fn = loss_fn
+
+  def train_step(self, real_data):
+    if isinstance(real_data, tuple):
+      real_data = real_data[0]
+
+    bs = tf.shape(real_data)[0]
+    z = tf.random.normal(shape=(bs, self.latent_dim))
+    fake_data = self.generator(z)
+
+    combined_data = tf.concat([real_data, fake_data], axis=0)
+    labels = tf.concat([tf.ones((bs, 1)), tf.zeros((bs, 1))], axis=0)
+
+    with tf.GradientTape() as tape:
+      preds = self.discriminator(combined_data)
+      d_loss = self.loss_fn(labels, preds)
+
+    grads = tape.gradient(d_loss, self.discriminator.trainable_weights)
+    self.optD.apply_gradients(zip(grads, self.discriminator.trainable_weights))
+
+    misleading_labels = tf.ones((bs, 1))
+    z = tf.random.normal(shape=(bs, self.latent_dim))
+
+    with tf.GradientTape() as tape:
+      fake_preds = self.discriminator(self.generator(z))
+      g_loss = self.loss_fn(misleading_labels, fake_preds)
+    grads = tape.gradient(g_loss, self.generator.trainable_weights)
+    self.optG.apply_gradients(zip(grads, self.generator.trainable_weights))
+
+    return {"d_loss": d_loss, "g_loss": g_loss}
+    
+# Intialize it and train it
+gan = GAN(gen, disc)
+gan.compile(keras.optimizers.Adam(1e-4),
+            keras.optimizers.Adam(1e-4),
+            keras.losses.BinaryCrossentropy(from_logits=True))
+            
+# where data is the tf dataset object shuffled, batched and prefetch
+gan.train(data, epochs)
