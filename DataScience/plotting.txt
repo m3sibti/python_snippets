@@ -5,6 +5,13 @@ import matplotlib.gridspec as gridspec
 import numpy as np
 from tensorflow.keras.preprocessing import image as kimage
 
+# Create Gif File from List of Images
+import imageio
+images = []
+for filename in os.listdir('./samples'):
+  fn = 'samples/' + filename 
+  images.append(imageio.imread(fn))
+imageio.mimsave('oneD.gif', images)
 
 class ImageUtils:
 
