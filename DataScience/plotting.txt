@@ -13,6 +13,20 @@ for filename in os.listdir('./samples'):
   images.append(imageio.imread(fn))
 imageio.mimsave('oneD.gif', images)
 
+# Create animated Scatter Plot
+from celluloid import Camera
+real_x, real_y  = data[:, 0], data[:, 1]
+camera = Camera(plt.figure())
+plt.xlim(-0.8, 0.8)
+plt.ylim(-0.25, 0.5)
+for i in range(len(generated_points_list)):
+  plt.scatter(real_x, real_y, color='blue')
+  fake_x, fake_y = generated_points_list[i][:, 0], generated_points_list[i][:, 1]
+  plt.scatter(fake_x, fake_y, color='red', s=10)
+  camera.snap()
+anim = camera.animate(blit=True)
+anim.save('res.mp4', fps=10)
+
 class ImageUtils:
 
   # Prepare image from a desktop
