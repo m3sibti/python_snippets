@@ -27,6 +27,23 @@ for i in range(len(generated_points_list)):
 anim = camera.animate(blit=True)
 anim.save('res.mp4', fps=10)
 
+# Show Images Batch
+def show_imgs(data, num_imgs=25, rows_cols=None):
+  if rows_cols == None:
+    rows = int(np.sqrt(num_imgs))
+    cols = rows
+  else:
+    rows = rows_cols[0]
+    cols = rows_cols[1]
+    num_imgs = rows * cols
+  plt.figure(figsize=(8, 8))
+  for i in range(num_imgs):
+    plt.subplot(rows, cols, i+1)
+    plt.axis('off')
+    plt.imshow(data[i])
+
+show_imgs(data, rows_cols=(5,5))
+
 class ImageUtils:
 
   # Prepare image from a desktop
