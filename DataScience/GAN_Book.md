@@ -13,3 +13,10 @@ Second part is about Basics of GAN. In this part we perform various different im
 ![Alt text](https://raw.githubusercontent.com/m3sibti/python_snippets/master/DataScience/files/gan_book_1_p02.svg)
 
 <br><br>
+
+Third part explains some of the qualitative and quantitative methods for evaluating your GAN models or generated Images. Mind Map is given below..
+<br><br>
+
+![Alt text](https://raw.githubusercontent.com/m3sibti/python_snippets/master/DataScience/files/gan_book_1_p03.svg)
+
+<br><br>
