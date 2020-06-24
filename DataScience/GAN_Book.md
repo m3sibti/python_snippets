@@ -20,3 +20,10 @@ Third part explains some of the qualitative and quantitative methods for evaluat
 ![Alt text](https://raw.githubusercontent.com/m3sibti/python_snippets/master/DataScience/files/gan_book_1_p03.svg)
 
 <br><br>
+
+Fourth part of the selected book present the various loss function of GAN till the date and discuss the two most effective of them. Mind Map is given below..
+<br><br>
+
+![Alt text](https://raw.githubusercontent.com/m3sibti/python_snippets/master/DataScience/files/gan_book_1_p04.svg)
+
+<br><br>
